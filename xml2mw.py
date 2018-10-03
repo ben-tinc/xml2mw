@@ -24,6 +24,7 @@ Recreate mediawiki markup pages from a confluence xml export directory.
 from datetime import datetime
 from os.path import abspath, basename, dirname, join, normpath
 
+from anytree import Node, RenderTree
 from lxml import etree
 
 # Modify this to suit your needs.
@@ -85,6 +86,8 @@ def parse_page_data(elem, root):
             relevant = ['creatorName', 'creationDate', 'lastModificationDate', 'title', 'position', 'version', 'contentStatus']
             if name in relevant:
                 data[name] = child.text
+            elif name == 'parent':
+                data['parent'] = child.find('id').text
         # Collection elements can be 'children', 'bodyContents',
         # 'outgoingLinks', 'referralLinks' or something irrelevant for us.
         if child.tag == 'collection':
@@ -139,6 +142,38 @@ def filter_pages(pages):
     filtered = {k: v for k, v in pages.items() if k in recent_ids}
 
     return filtered
+
+
+def build_sitemap(pages):
+    """Build a tree of pages."""
+
+    def _create_node(page, all_pages, parent):
+        """Create nodes recursively until nodes have no children.""" 
+        if not page: return
+        
+        current_title = page.get('title')
+        current = Node(current_title, parent=parent)
+
+        for child_id in page.get('children', '').split(','):
+            child_page = all_pages.get(child_id)
+            _create_node(child_page, all_pages, parent=current)
+    
+    rootNode = Node('/')
+    toplevel = {k: v for k,v in pages.items() if not v.get('parent')}
+    
+    for page in toplevel.values():
+        _create_node(page, pages, rootNode)
+
+    return rootNode
+
+
+def write_sitemap(rootNode, filename='sitemap.txt'):
+    """Write visualization of sitemap to file."""
+    s = []
+    for pre, fill, node in RenderTree(rootNode):
+        s.append("%s%s" % (pre, node.name))
+    with open(filename, 'w') as sitemap:
+        sitemap.write("\n".join(s))
 
 
 def denormalize(root, pages):
@@ -227,6 +262,12 @@ def main():
     print("Built %s pages." % len(pages))
     pages = filter_pages(pages)
     print("%s pages after filtering." % len(pages))
+    
+    rootNode = build_sitemap(pages)
+    write_sitemap(rootNode, "sitemap.txt")
+    # for pre, fill, node in RenderTree(rootNode):
+    #     print("%s%s" % (pre, node.name))
+    
     pages = denormalize(root, pages)
     print("%s pages after denormalization." % len(pages))
     write_markup(pages, OUT_PATH, PLAIN_TEMPLATE)

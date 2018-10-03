@@ -5,6 +5,7 @@ name = "pypi"
 
 [packages]
 lxml = "*"
+anytree = "*"
 
 [dev-packages]
 ipython = "*"
