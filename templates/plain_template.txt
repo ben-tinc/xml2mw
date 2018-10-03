@@ -1,0 +1,8 @@
+Title: {title}
+
+Version: {version}
+Created: {created}
+Latest Mod: {latest_mod}
+Position: {position}
+
+{body}
