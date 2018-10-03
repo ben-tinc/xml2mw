@@ -22,6 +22,7 @@ Recreate mediawiki markup pages from a confluence xml export directory.
 """
 
 from datetime import datetime
+from os import makedirs
 from os.path import abspath, basename, dirname, join, normpath
 
 from anytree import Node, RenderTree
@@ -188,6 +189,8 @@ def denormalize(root, pages):
 
 def write_markup(pages, path, template):
     """Write a markup file for each page recovered from the XML."""
+    makedirs(path, exist_ok=True)
+
     with open(template) as tmpl_file:
         tmpl = tmpl_file.read()
 
