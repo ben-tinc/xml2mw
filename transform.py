@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# mw_writer.py
+# Filename: mw_writer.py
 # Copyright (C) 2018  Henning Gebhard
 
 """
