@@ -94,14 +94,11 @@ def parse_page_data(elem, root):
         if child.tag == 'collection':
             relevant = ['children', 'bodyContents', 'outgoingLinks', 'referralLinks']
             if name in relevant:
-                # Do stuff with these collections...
                 # All collections contain element tags with class "Page",
                 # "BodyContent", "ReferralLinks" a.s.o. Each of these
                 # contain an id tag with the id as text.
                 ids = _unpack_collection(child)
                 data[name] = ",".join(ids)
-                # if name == 'bodyContents':
-                #     data['body'] = _get_body_content(root, data[name])
     return data
 
 
@@ -149,19 +146,19 @@ def build_sitemap(pages):
     """Build a tree of pages."""
 
     def _create_node(page, all_pages, parent):
-        """Create nodes recursively until nodes have no children.""" 
+        """Create nodes recursively until nodes have no children."""
         if not page: return
-        
+
         current_title = page.get('title')
         current = Node(current_title, parent=parent)
 
         for child_id in page.get('children', '').split(','):
             child_page = all_pages.get(child_id)
             _create_node(child_page, all_pages, parent=current)
-    
+
     rootNode = Node('/')
     toplevel = {k: v for k,v in pages.items() if not v.get('parent')}
-    
+
     for page in toplevel.values():
         _create_node(page, pages, rootNode)
 
@@ -198,7 +195,7 @@ def write_markup(pages, path, template):
         body = page_data.get('body', '')
         filename = page_data.get('title', '') + '_' + str(page_id) + '.txt'
         filepath = join(path, filename)
-        d = {
+        data = {
             'body': body,
             'title': filename,
             'version': page_data.get('version'),
@@ -207,7 +204,7 @@ def write_markup(pages, path, template):
             'latest_mod': page_data.get('lastModificationDate'),
             'position': page_data.get('position'),
         }
-        filecontent = tmpl.format(**d)
+        filecontent = tmpl.format(**data)
 
         with open(filepath, 'w') as outfile:
             outfile.write(filecontent)
@@ -265,12 +262,10 @@ def main():
     print("Built %s pages." % len(pages))
     pages = filter_pages(pages)
     print("%s pages after filtering." % len(pages))
-    
+
     rootNode = build_sitemap(pages)
     write_sitemap(rootNode, "sitemap.txt")
-    # for pre, fill, node in RenderTree(rootNode):
-    #     print("%s%s" % (pre, node.name))
-    
+
     pages = denormalize(root, pages)
     print("%s pages after denormalization." % len(pages))
     write_markup(pages, OUT_PATH, PLAIN_TEMPLATE)
