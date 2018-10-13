@@ -8,23 +8,24 @@ Generate MediaWiki markup out of confluence markup.
 """
 
 # Some basic template strings
+# The confluence -> mediawiki mapping is not a direct one
+# to allow for some logic in an intermediate step.
 MARKUP = {
-    'h1': '# {}',
-    'h2': '## {}',
-    'h3': '### {}',
-    'h4': '#### {}',
-    'p': '\n{}',
+    'h1': '= {} =',
+    'h2': '== {} ==',
+    'h3': '=== {} ===',
+    'h4': '==== {} ====',
+    # 'p': '<br />{}',
     'hr': '----{}',
-    'uli': ' * {}',
-    'oli': ' 1. {}',
+    'uli': '* {}',
+    'oli': '# {}',
 }
-
 CONFLUENCE_MU = {
     'h1. ': 'h1',
     'h2. ': 'h2',
     'h3. ': 'h3',
     'h4. ': 'h4',
-    '\n': 'p',
+    # '\n': 'p',
     '* ': 'uli',
 }
 

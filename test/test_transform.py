@@ -28,7 +28,7 @@ class TransformToMW(TestCase):
         """Test transformation of heading markup."""
         page_body = 'h1. H1\nh2. H2\nh3. H3\nh4. H4\n'
         result = '\n'.join(to_mw(page_body))
-        expected = '# H1\n## H2\n### H3\n#### H4\n'
+        expected = '= H1 =\n== H2 ==\n=== H3 ===\n==== H4 ====\n'
         self.assertEqual(result, expected)
 
     def test_inline_markup(self):
@@ -38,5 +38,5 @@ class TransformToMW(TestCase):
         """
         page_body = 'h1. A Heading\n\nA line with h1. in it.\n'
         result = '\n'.join(to_mw(page_body))
-        expected = '# A Heading\n\nA line with h1. in it.\n'
+        expected = '= A Heading =\n\nA line with h1. in it.\n'
         self.assertEqual(result, expected)
