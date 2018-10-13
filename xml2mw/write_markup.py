@@ -6,7 +6,7 @@
 from os import makedirs
 from os.path import join
 
-from transform import to_mw
+from xml2mw.transform import to_mw
 
 
 def write_mediawiki(pages, path, template):

@@ -6,7 +6,7 @@ Unit tests for sitemap.py
 
 from unittest import TestCase
 
-from sitemap import build_sitemap
+from xml2mw.sitemap import build_sitemap
 
 
 class TestBuildSitemap(TestCase):

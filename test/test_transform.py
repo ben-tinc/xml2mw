@@ -6,7 +6,7 @@ Unit tests for transform.py
 
 from unittest import TestCase
 
-from transform import to_mw
+from xml2mw.transform import to_mw
 
 
 class TransformToMW(TestCase):

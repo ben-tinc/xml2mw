@@ -8,7 +8,7 @@ from unittest import TestCase
 
 from lxml import etree
 
-from read_xml import (
+from xml2mw.read_xml import (
     denormalize,
     filter_most_recent,
     parse_page_data,
