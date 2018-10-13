@@ -41,7 +41,7 @@ MEWI_TEMPLATE = join(TEMPLATE_PATH, "mw_template.txt")
 def main():
     """Run the actual script"""
     # Retrieve all the page data from XML export file.
-    pages = read_xml.read(join(BASE_PATH, 'entities.xml'))
+    pages = read_xml.read(join(XML_PATH, 'entities.xml'))
 
     # Generate a sitemap visualization of the tree structure of the pages.
     sitemap_root = build_sitemap(pages)

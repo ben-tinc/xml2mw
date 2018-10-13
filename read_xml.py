@@ -25,14 +25,15 @@ def read(filepath):
     - Filters all but the most recent pages.
     - Acquires linked content of the pages.
     """
+    pages = {}
     try:
         root = parse_xml(filepath)
         pages = retrieve_all_pages(root)
         pages = filter_most_recent(pages)
         pages = denormalize(root, pages)
-    except:
+    except Exception as e:
         print("Could not execute read_xml.read().")
-
+        raise e
     return pages
 
 
