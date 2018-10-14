@@ -23,9 +23,9 @@ Recreate mediawiki markup pages from a confluence xml export directory.
 
 from os.path import abspath, basename, dirname, join, normpath
 
-import read_xml
-from sitemap import build_sitemap, write_sitemap
-from write_markup import write_mediawiki
+from xml2mw import read_xml
+from xml2mw.sitemap import build_sitemap, write_sitemap
+from xml2mw.write_markup import write_mediawiki
 
 # Modify this to suit your needs.
 XML_PATH = "./data"           # path to folder which contains your 'entities.xml' export file

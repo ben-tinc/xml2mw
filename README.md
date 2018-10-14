@@ -10,3 +10,7 @@ Parse confluence xml export and generate pages with mediawiki markup.
  * Run `python xml2mw.py`.
 
 Now, result files should be in `OUT_PATH`, and a file `sitemap.txt` should be in the base directory.
+
+## Test suite
+
+If you want to run the test suite, just run `python -m unittest discover`. Using `pytest` should work as well, if you prefer that. `pytest` is included in the development dependencies, which you can install with `pipenv install --dev`.
