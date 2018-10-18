@@ -176,3 +176,67 @@ class TransformEmphasis(TestCase):
         for page_body, expected in known_items:
             result = '\n'.join(to_mw(page_body))
             self.assertEqual(result, expected)
+
+
+class TransformLinks(TestCase):
+    """TestCases for links, both internal wiki links as well as
+    external links.
+    """
+    def test_internal_link(self):
+        """An internal link without special label text."""
+        lines = [
+            ('A line with a [PageLink] in it.\n' ,'A line with a [[PageLink]] in it.\n'),
+            ('This line ends with [PageLink].\n', 'This line ends with [[PageLink]].\n'),
+            ('[PageLink] at the start.\n', '[[PageLink]] at the start.\n'),
+        ]
+        for confluence, mediawiki in lines:
+            result = '\n'.join(to_mw(confluence))
+            self.assertEqual(result, mediawiki)
+
+    def test_internal_link_with_anchor(self):
+        """An internal link without special label text but with anchor element."""
+        lines = [
+            ('A line with a [PageLink#anchor] in it.\n' ,'A line with a [[PageLink#anchor]] in it.\n'),
+            ('This line ends with [PageLink#anchor].\n', 'This line ends with [[PageLink#anchor]].\n'),
+            ('[PageLink#anchor] at the start.\n', '[[PageLink#anchor]] at the start.\n'),
+        ]
+        for confluence, mediawiki in lines:
+            result = '\n'.join(to_mw(confluence))
+            self.assertEqual(result, mediawiki)
+
+    def test_internal_link_with_label(self):
+        """An internal link with custom label text."""
+        lines = [
+            ('A line with a [My Label|PageLink#anchor] in it.\n' ,'A line with a [[PageLink#anchor|My Label]] in it.\n'),
+            ('This line ends with [My Label|PageLink#anchor].\n', 'This line ends with [[PageLink#anchor|My Label]].\n'),
+            ('[My Label|PageLink#anchor] at the start.\n', '[[PageLink#anchor|My Label]] at the start.\n'),
+        ]
+        for confluence, mediawiki in lines:
+            result = '\n'.join(to_mw(confluence))
+            self.assertEqual(result, mediawiki)
+
+    def test_external_link(self):
+        """An external link. In this specific case, `to_mw()` should
+        be a no-op.
+        """
+        lines = [
+            ('A line with a [https://example.com/page#anchor] in it.\n' ,'A line with a [https://example.com/page#anchor] in it.\n'),
+            ('This line ends with [https://example.com/page#anchor].\n', 'This line ends with [https://example.com/page#anchor].\n'),
+            ('[https://example.com/page#anchor] at the start.\n', '[https://example.com/page#anchor] at the start.\n'),
+        ]
+        for confluence, mediawiki in lines:
+            result = '\n'.join(to_mw(confluence))
+            self.assertEqual(result, mediawiki)
+    
+    def test_external_link_with_label(self):
+        """An external link with custom label text. Contrary to the version without label,
+        the syntax of mediawiki and confluence differs slightly.
+        """
+        lines = [
+            ('A line with a [My Label|https://example.com/page#anchor] in it.\n' ,'A line with a [https://example.com/page#anchor My Label] in it.\n'),
+            ('This line ends with [My Label|https://example.com/page#anchor].\n', 'This line ends with [https://example.com/page#anchor My Label].\n'),
+            ('[My Label|https://example.com/page#anchor] at the start.\n', '[https://example.com/page#anchor My Label] at the start.\n'),
+        ]
+        for confluence, mediawiki in lines:
+            result = '\n'.join(to_mw(confluence))
+            self.assertEqual(result, mediawiki)
