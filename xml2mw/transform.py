@@ -49,7 +49,8 @@ def to_mw(body_content):
     """Parse string with confluence markup."""
     for line in body_content.split('\n'):
         possibly_changed = _transform_line_start(line)
-        possibly_changed = _transform_inner_line(possibly_changed)
+        possibly_changed = _transform_emphasis(possibly_changed)
+        possibly_changed = _transform_links(possibly_changed)
 
         # Either yield the freshly created result, or the original line.
         yield possibly_changed
@@ -67,7 +68,7 @@ def _transform_line_start(line):
     return result or line
 
 
-def _transform_inner_line(line):
+def _transform_emphasis(line):
     result = ''
     emphasis_pattern = re.compile(r'([\*_]+)(\S[^\*_]*)([\*_]+)')
 
@@ -83,6 +84,28 @@ def _transform_inner_line(line):
                 result = line
             except KeyError:
                 continue
+    return result or line
+
+
+def _transform_links(line):
+    result = ''
+    link_pattern = re.compile(r'\[(.*\|)?(.*)\]')
+
+    for (label, url) in re.findall(link_pattern, line):
+        markup = ('[', ']') if url.startswith('http') else ('[[', ']]')
+        mw_label = ''
+        # Label generation in mediawiki differs for external and internal links.
+        if label:
+            # Remove trailing '|'.
+            label = label[:-1]
+            if url.startswith('http'):
+                mw_label = ' {}'.format(label)
+            else:
+                mw_label = '|{}'.format(label)
+        replacement = '{}{}{}{}'.format(markup[0], url, mw_label, markup[1])
+        line = re.sub(link_pattern, replacement, line, count=1)
+        result = line 
+    
     return result or line
 
 
